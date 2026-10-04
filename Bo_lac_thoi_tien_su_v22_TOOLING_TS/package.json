@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "tsc && cp src/index.html src/shell.css src/classes.json src/resources.json dist/",
+    "build": "tsc && cp src/index.html src/shell.css src/classes.json src/resources.json dist/ && rm -rf dist/art dist/fonts dist/locale dist/resources && cp -r src/art src/fonts src/locale src/resources dist/",
     "typecheck": "tsc --noEmit",
     "test": "npm run build && npm run build:tools && node --test .tool-dist/tests/*.test.js",
     "start": "python3 -m http.server 8080 --directory dist",
