@@ -1,0 +1,17 @@
+{
+  "instructions": 69512254,
+  "errors": [],
+  "verified": [
+    "selected villager header",
+    "information explanation",
+    "deselect",
+    "villager list",
+    "second villager header"
+  ],
+  "avatarDraws": 38,
+  "avatarIds": [
+    11,
+    3
+  ],
+  "environment": "Node Canvas, original Java key events"
+}

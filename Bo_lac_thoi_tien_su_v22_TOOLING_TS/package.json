@@ -1,0 +1,22 @@
+{
+  "name": "bo-lac-original-web",
+  "version": "2.7.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsc && cp src/index.html src/shell.css src/classes.json src/resources.json dist/",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && npm run build:tools && node --test .tool-dist/tests/*.test.js",
+    "start": "python3 -m http.server 8080 --directory dist",
+    "test:original": "npm run build:tools && node .tool-dist/port-tools/run-original.js",
+    "audit": "python3 port-tools/audit.py",
+    "check": "npm run typecheck && npm test",
+    "audit:ts": "python3 port-tools/typescript-audit.py",
+    "build:tools": "tsc -p tsconfig.tools.json && mkdir -p .tool-dist/dist && cp -r dist/* .tool-dist/dist/",
+    "typecheck:strict-runtime": "tsc -p tsconfig.runtime-strict.json --pretty false",
+    "verify:ai-studio": "npm run check && npm run build:tools"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

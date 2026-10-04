@@ -1,0 +1,14 @@
+{
+  "environment": "Node native Canvas; not Android/browser FPS",
+  "frames": 600,
+  "presented": 109,
+  "simulatedSeconds": 10,
+  "meanMs": 4.681342148333337,
+  "p95Ms": 16.613922000000457,
+  "maxMs": 36.556149000000005,
+  "errors": [],
+  "camera": [
+    1,
+    3
+  ]
+}

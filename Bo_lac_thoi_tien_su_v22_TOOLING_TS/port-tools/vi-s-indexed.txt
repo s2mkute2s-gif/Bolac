@@ -1,0 +1,229 @@
+0: kho vu khi
+1: phong tap
+2: leu
+3: leu cua tu truong
+4: bep
+5: khu tap nem
+6: kho
+7: san disco
+8: khu thanh dia
+9: trung tam pia
+10: nha tre
+11: choi canh
+12: dui cui
+13: da
+14: giao
+15: bua da
+16: chuy xuong
+17: riu nho
+18: bay luoi
+19: bay lo xo
+20: bay ham
+21: xay dung
+22: tap hop!
+23: lenh chien dau!
+24: dan lang
+25: giai tan
+26: tro ve lam viec
+27: nang cap
+28: pha huy
+29: ra khoi day!
+30: chua vet thuong
+31: phong thu
+32: thuoc tinh yeu
+33: benh dich
+34: thong tin: tat ca
+35: thong tin: duoc chon
+36: thong tin: khong hien
+37: sua chua
+38: huy nang cap
+39: huy sua chua
+40: huy tai
+41: chon tu truong
+42:  duoc sinh ra
+43:  duoc sinh ra
+44:  da chet
+45:  da chet
+46: nha da xay xong.
+47: da phat hien ke thu!
+48: chung ta dang bi tan song!
+49: nha da bi pha huy!
+50: can nguyen lieu!
+51: da qua nhieu nha
+52: da qua nhieu nguoi
+53: chung ta can dau dep.
+54: chung ta can phap su.
+55: chung ta can nguoi che tao vu khi.
+56: chung ta can 1 dj.
+57: bat dau tro choi
+58: tro giup
+59: tuy chon
+60: ve tro choi
+61: them tro choi khac
+62: thoat
+63: tiep tuc
+64: luu lai
+65: choi tiep
+66: thoat
+67: tro choi moi
+68: tiep tuc
+69: chien dich
+70: tro choi tuy chinh
+71: huong dan
+72: am nhac
+73: goi y
+74: tat
+75: bat
+76: do kho
+77: de
+78: kho
+79: canh bao!
+80: menu chinh
+81: menu tam dung
+82: ben ngoai
+83: tra thu
+84: chay tron
+85: vung dat hoang
+86: ngoi nha moi
+87: ho rong
+88: vuot qua sa mac
+89: rung day leo
+90: tan sat
+91: manh dat
+92: tieng viet
+93: franc[ais
+94: italiano
+95: deutsch
+96: espan_ol
+97: diem
+98: ve tro choi
+99: dieu khien
+100: cach choi
+101: nguoi dan
+102: huong dan
+103: ket thuc
+104: tu truong nk2klove
+105: phap su
+106: bo toc an thit nguoi
+107: jafar
+108: jumbo
+109: juju
+110: mumbo
+111: freaky
+112: ludo
+113: konan
+114: rumbo
+115: milo
+116: kipp
+117: errrbo
+118: gumbo
+119: edwood
+120: arnni
+121: erk
+122: daymo
+123: bookah
+124: erbby
+125: ukkko
+126: ukmol
+127: pard
+128: rayvon
+129: narik
+130: derger
+131: rychi
+132: mylo
+133: rilo
+134: babon
+135: harpo
+136: seppo
+137: chico
+138: taran
+139: tone
+140: derp
+141: tupik
+142: makka
+143: gooon
+144: dooon
+145: tooon
+146: deano
+147: fred
+148: barney
+149: siggy
+150: gizzz
+151: smoki
+152: noggin
+153: rryyan
+154: jimbly
+155: brooce
+156: ernest
+157: addam
+158: bibby
+159: dave
+160: rowie
+161: fuzzy
+162: furlog
+163: cral
+164: jonno
+165: beehag
+166: hazza
+167: pard
+168: kazza
+169: tazza
+170: loula
+171: treena
+172: dorris
+173: ethel
+174: tessa
+175: nora
+176: flora
+177: fauna
+178: mila
+179: daisi
+180: myrtle
+181: margo
+182: audrey
+183: irene
+184: hurdy
+185: gurdy
+186: murli
+187: mousi
+188: irma
+189: urna
+190: purga
+191: grami
+192: urrki
+193: lavka
+194: manka
+195: banka
+196: bunki
+197: gretel
+198: spiki
+199: arida
+200: ronda
+201: mayka
+202: vanni
+203: buffi
+204: aromi
+205: mitte
+206: ritte
+207: banne
+208: polka
+209: dolka
+210: korka
+211: zorka
+212: palka
+213: milka
+214: aarka
+215: uurka
+216: erikka
+217: kikka
+218: umka
+219: arka
+220: jarka
+221: bulka
+222: klura
+223: onaka
+224: bilma
+225: zuyka
+226: alika
+227: ubika
+228: 

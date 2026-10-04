@@ -1,0 +1,35 @@
+{
+  "artifact": "v24 AI Studio Ready",
+  "runtime_baseline_typecheck": "PASS",
+  "runtime_build": "PASS",
+  "tooling_build": "PASS",
+  "regression": "15/15 PASS",
+  "full_strict_runtime": "NOT YET PASS",
+  "strict_runtime_diagnostics": 267,
+  "diagnostics_by_file": {
+    "art.ts": 25,
+    "hud-icons.ts": 5,
+    "midp.ts": 58,
+    "shell.ts": 21,
+    "touch.ts": 64,
+    "unicode-text.ts": 11,
+    "vm.ts": 83
+  },
+  "diagnostics_by_code": {
+    "TS7006": 145,
+    "TS7008": 22,
+    "TS7053": 15,
+    "TS7034": 6,
+    "TS2531": 2,
+    "TS7005": 15,
+    "TS2322": 7,
+    "TS2532": 2,
+    "TS2339": 52,
+    "TS18047": 1
+  },
+  "policy": [
+    "no @ts-ignore",
+    "no @ts-nocheck",
+    "do not add explicit any to silence strict errors"
+  ]
+}

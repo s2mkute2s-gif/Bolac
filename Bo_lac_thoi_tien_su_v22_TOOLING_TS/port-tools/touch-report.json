@@ -1,0 +1,29 @@
+{
+  "errors": [],
+  "checks": [
+    "language",
+    "main menu",
+    "options",
+    "campaign",
+    "dialogues",
+    "body selection",
+    "movement to target [5,11]",
+    "camera drag",
+    "action bar",
+    "villager list selection",
+    "build menu, placement cursor and cancel",
+    "save menu",
+    "hold and drag group selection"
+  ],
+  "saveRecords": [
+    {
+      "key": "tribes-original-rms:t1",
+      "length": 25723
+    },
+    {
+      "key": "tribes-original-rms:t0",
+      "length": 23
+    }
+  ],
+  "instructions": 51082486
+}

@@ -1,0 +1,12 @@
+{
+  "introStates": [
+    2,
+    5
+  ],
+  "skippedIntroDelays": 3,
+  "oldLogoImagesDecoded": false,
+  "uncaughtErrors": [],
+  "currentCanvas": "f",
+  "instructions": 4455903,
+  "environment": "Node native Canvas; cold boot and real game key events"
+}

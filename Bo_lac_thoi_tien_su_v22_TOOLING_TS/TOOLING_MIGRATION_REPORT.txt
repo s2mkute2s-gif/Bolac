@@ -1,0 +1,7 @@
+TypeScript tooling migration
+- tests/*.mjs + port-tools/*.mjs: 17 -> 0
+- TypeScript replacements: 17
+- Per-file @ts suppression: 0
+- Runtime build: PASS
+- Tooling transpile: PASS (tsconfig.tools.json, noCheck=true; strict tooling is a later phase)
+- Regression: 15/15 PASS

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": ".",
+    "outDir": ".tool-dist",
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "noEmitOnError": false,
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": [
+    "tests/**/*.ts",
+    "port-tools/**/*.ts",
+    "original-web/**/*.ts",
+    "tooling-globals.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".tool-dist"
+  ]
+}

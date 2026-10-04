@@ -1,0 +1,426 @@
+import { JavaFault } from './vm.js';
+const cls = (javaClass, extra = {}) => ({ javaClass, fields: {}, ...extra });
+export class MIDP {
+    canvas;
+    makeCanvas;
+    decodeImage;
+    resources;
+    manifest;
+    storage;
+    clock;
+    onError;
+    onStatus;
+    audio;
+    renderScale;
+    art;
+    vm;
+    current;
+    images;
+    records;
+    display;
+    backCanvas;
+    screenGraphics;
+    presentedFrames;
+    paintThread;
+    repaint;
+    media;
+    nativeCalls;
+    skippedIntroDelays;
+    textBridge;
+    touch;
+    constructor({ canvas, makeCanvas, decodeImage, resources, manifest, storage, clock = () => Date.now(), onError = console.error, onStatus = () => { }, audio = null, renderScale = 1, art = null }) { Object.assign(this, { canvas, makeCanvas, decodeImage, resources, manifest, storage, clock, onError, onStatus, audio, renderScale, art }); this.current = null; this.images = new Map(); this.records = {}; this.display = cls('javax/microedition/lcdui/Display'); this.backCanvas = makeCanvas(canvas.width, canvas.height); this.backCanvas.renderScale = canvas.renderScale || renderScale; this.screenGraphics = this.graphics(this.backCanvas); this.presentedFrames = 0; this.paintThread = null; this.repaint = false; this.media = []; this.nativeCalls = new Set(); }
+    graphics(canvas) { const scale = canvas.renderScale || 1, context = canvas.getContext('2d'); context.setTransform(scale, 0, 0, scale, 0, 0); return cls('javax/microedition/lcdui/Graphics', { canvas, context, color: '#000000', clip: [0, 0, canvas.width / scale, canvas.height / scale] }); }
+    stream(data) { return cls('java/io/ByteArrayInputStream', { data, pos: 0 }); }
+    bytes(o) { while (o.stream)
+        o = o.stream; return o; }
+    image(data) { const bytes = Uint8Array.from(data), key = Array.from(bytes).join(','); if (this.images.has(key))
+        return this.images.get(key); const replacement = this.art?.replacement(bytes); const p = replacement ? Promise.resolve(cls('javax/microedition/lcdui/Image', replacement)) : this.decodeImage(bytes).then(img => cls('javax/microedition/lcdui/Image', { canvas: img, width: img.width, height: img.height })); this.images.set(key, p); return p; }
+    present() { const t = this.paintThread; if (!t || !t.done)
+        return false; this.paintThread = null; if (this.vm.errors.length)
+        return false; const ctx = this.canvas.getContext('2d'); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'copy'; ctx.drawImage(this.backCanvas, 0, 0); ctx.restore(); this.presentedFrames++; return true; }
+    paint() {
+        this.present();
+        if (this.art && this.current?.javaClass === 'd' && this.vm.get(this.current, 'd', 'a', 'B') < 2)
+            return;
+        // A Java update can span animation callbacks. Never sample its half-built map.
+        if (this.vm.threads.some(t => !t.done && !t.waiting && !t.yield && t.wake <= this.vm.now))
+            return;
+        if (this.current && this.repaint && !this.paintThread) {
+            this.repaint = false;
+            this.paintThread = this.vm.start(this.current, 'paint', '(Ljavax/microedition/lcdui/Graphics;)V', [this.screenGraphics]);
+        }
+    }
+    render(now, maxMs = 4) { this.paint(); const t = this.paintThread; if (t && !t.done && !t.waiting) {
+        this.vm.runThread(t, now, 120000, performance.now() + maxMs);
+        this.present();
+    } }
+    key(code, pressed) { if (!this.current)
+        return; const name = pressed ? 'keyPressed' : 'keyReleased', m = this.vm.resolve(this.current.javaClass, name, '(I)V'); if (m.method)
+        this.vm.start(this.current, name, '(I)V', [code]); }
+    draw(g, fn) { const c = g.context; c.save(); c.imageSmoothingEnabled = false; c.beginPath(); c.rect(...g.clip); c.clip(); c.fillStyle = c.strokeStyle = g.color; fn(c); c.restore(); }
+    anchor(x, y, w, h, a) { if (a & 1)
+        x -= w >> 1;
+    else if (a & 8)
+        x -= w; if (a & 2)
+        y -= h >> 1;
+    else if (a & 32)
+        y -= h; return [x, y]; }
+    persist(name) { try {
+        this.storage.setItem('tribes-original-rms:' + name, JSON.stringify(this.records[name]));
+        this.onStatus('Đã lưu dữ liệu gốc');
+    }
+    catch (e) {
+        throw new JavaFault('javax/microedition/rms/RecordStoreFullException', e instanceof Error ? e.message : String(e));
+    } }
+    invoke(owner, name, desc, obj, args, t) {
+        this.nativeCalls.add(owner + '.' + name + desc);
+        const [a, b, c, d, e, f, g, h, i] = args;
+        if (name === 'getClass' && desc === '()Ljava/lang/Class;')
+            return cls('java/lang/Class', { name: obj.javaClass });
+        if (owner === 'java/lang/Object') {
+            if (name === '<init>')
+                return;
+            if (name === 'getClass')
+                return cls('java/lang/Class', { name: obj.javaClass });
+        }
+        if (owner === 'java/lang/Class' && name === 'getResourceAsStream') {
+            const path = a.replace(/^\//, '');
+            const data = this.resources[path];
+            if (!data)
+                return null;
+            return this.stream(Int8Array.from(data));
+        }
+        if (owner === 'java/lang/System') {
+            if (name === 'currentTimeMillis')
+                return BigInt(Math.floor(this.clock()));
+            if (name === 'gc')
+                return;
+            if (name === 'arraycopy') {
+                this.vm.notNull(a);
+                this.vm.notNull(c);
+                if (b < 0 || d < 0 || e < 0 || b + e > a.length || d + e > c.length)
+                    throw new JavaFault('java/lang/ArrayIndexOutOfBoundsException');
+                const tmp = a.slice(b, b + e);
+                for (let j = 0; j < e; j++)
+                    c[d + j] = tmp[j];
+                return;
+            }
+        }
+        if (owner === 'java/lang/String') {
+            if (name === 'length')
+                return obj.length;
+            if (name === 'charAt') {
+                if (a < 0 || a >= obj.length)
+                    throw new JavaFault('java/lang/StringIndexOutOfBoundsException');
+                return obj.charCodeAt(a);
+            }
+            if (name === 'equals')
+                return obj === a ? 1 : 0;
+            if (name === 'valueOf')
+                return String(a);
+        }
+        if (owner === 'java/lang/StringBuffer') {
+            if (name === '<init>') {
+                obj.text = '';
+                return;
+            }
+            if (name === 'append') {
+                obj.text += a === null ? 'null' : String(a);
+                return obj;
+            }
+            if (name === 'toString')
+                return obj.text;
+        }
+        if (owner === 'java/lang/Thread') {
+            if (name === '<init>') {
+                obj.runnable = a;
+                return;
+            }
+            if (name === 'start') {
+                this.vm.start(obj.runnable, 'run', '()V');
+                return;
+            }
+            if (name === 'sleep') {
+                if (this.art && t.frames.at(-1)?.owner === 'tribes' && t.frames.some(f => f.owner === 'tribes' && f.method.name === 'run')) {
+                    this.skippedIntroDelays = (this.skippedIntroDelays || 0) + 1;
+                    return;
+                }
+                t.wake = this.clock() + Number(a);
+                t.yield = true;
+                return;
+            }
+            if (name === 'yield') {
+                t.yield = true;
+                return;
+            }
+        }
+        if (owner === 'java/util/Random') {
+            if (name === '<init>') {
+                obj.seed = (a ^ 0x5deece66dn) & ((1n << 48n) - 1n);
+                return;
+            }
+            if (name === 'nextInt') {
+                obj.seed = (obj.seed * 0x5deece66dn + 11n) & ((1n << 48n) - 1n);
+                return Number(BigInt.asIntN(32, obj.seed >> 16n));
+            }
+        }
+        if (owner.startsWith('java/io/')) {
+            if (name === '<init>') {
+                if (owner === 'java/io/ByteArrayInputStream') {
+                    obj.data = a.slice(b || 0, (b || 0) + (c ?? a.length));
+                    obj.pos = 0;
+                }
+                else if (owner === 'java/io/ByteArrayOutputStream')
+                    obj.output = [];
+                else
+                    obj.stream = a;
+                return;
+            }
+            if (name === 'close')
+                return;
+            let base = this.bytes(obj);
+            const readByte = () => { if (base.pos >= base.data.length)
+                throw new JavaFault('java/io/EOFException'); return base.data[base.pos++] & 255; };
+            if (name === 'read') {
+                if (!args.length)
+                    return base.pos < base.data.length ? readByte() : -1;
+                this.vm.notNull(a);
+                const off = b || 0, len = c ?? a.length;
+                if (off < 0 || len < 0 || off + len > a.length)
+                    throw new JavaFault('java/lang/IndexOutOfBoundsException');
+                if (!len)
+                    return 0;
+                if (base.pos >= base.data.length)
+                    return -1;
+                let n = Math.min(len, base.data.length - base.pos);
+                for (let j = 0; j < n; j++)
+                    a[off + j] = readByte() << 24 >> 24;
+                return n;
+            }
+            if (name === 'readBoolean')
+                return readByte() ? 1 : 0;
+            if (name === 'readByte')
+                return readByte() << 24 >> 24;
+            if (name === 'readShort')
+                return (readByte() << 8 | readByte()) << 16 >> 16;
+            if (name === 'readInt')
+                return readByte() << 24 | readByte() << 16 | readByte() << 8 | readByte();
+            if (name === 'write') {
+                base.output.push(...Array.from(a, (x) => x & 255));
+                return;
+            }
+            if (name === 'writeBoolean') {
+                base.output.push(a ? 1 : 0);
+                return;
+            }
+            if (name === 'writeByte') {
+                base.output.push(a & 255);
+                return;
+            }
+            if (name === 'writeShort') {
+                base.output.push(a >>> 8 & 255, a & 255);
+                return;
+            }
+            if (name === 'writeInt') {
+                base.output.push(a >>> 24 & 255, a >>> 16 & 255, a >>> 8 & 255, a & 255);
+                return;
+            }
+            if (name === 'size')
+                return base.output.length;
+            if (name === 'toByteArray')
+                return Int8Array.from(base.output);
+        }
+        if (owner === 'javax/microedition/midlet/MIDlet') {
+            if (name === '<init>')
+                return;
+            if (name === 'getAppProperty')
+                return this.manifest[a] ?? null;
+            if (name === 'notifyDestroyed') {
+                this.onStatus('Game đã thoát. Tải lại trang để mở lại.');
+                this.vm.threads.forEach(t => t.done = true);
+                return;
+            }
+        }
+        if (owner === 'javax/microedition/lcdui/Canvas') {
+            if (name === '<init>' || name === 'setFullScreenMode')
+                return;
+            if (name === 'getGameAction')
+                return ({ '-1': 1, '-2': 6, '-3': 2, '-4': 5, '-5': 8, 50: 1, 56: 6, 52: 2, 54: 5, 53: 8 })[a] || 0;
+            if (name === 'repaint') {
+                this.repaint = true;
+                return;
+            }
+        }
+        if (owner === 'javax/microedition/lcdui/Display') {
+            if (name === 'getDisplay')
+                return this.display;
+            if (name === 'setCurrent') {
+                const old = this.current;
+                this.current = a;
+                if (old && old !== a && this.vm.resolve(old.javaClass, 'hideNotify', '()V').method)
+                    this.vm.start(old, 'hideNotify', '()V');
+                if (a && old !== a && this.vm.resolve(a.javaClass, 'showNotify', '()V').method)
+                    this.vm.start(a, 'showNotify', '()V');
+                this.repaint = true;
+                return;
+            }
+        }
+        if (owner === 'javax/microedition/lcdui/Image') {
+            if (name === 'createImage') {
+                if (desc.startsWith('(II)')) {
+                    const canvas = this.makeCanvas(a * this.renderScale, b * this.renderScale);
+                    canvas.renderScale = this.renderScale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    return cls(owner, { canvas, width: a, height: b });
+                }
+                if (typeof a === 'string') {
+                    if (this.art && /^\/l[01]$/.test(a)) {
+                        const canvas = this.makeCanvas(1, 1);
+                        return cls(owner, { canvas, width: 1, height: 1 });
+                    }
+                    const bytes = this.resources[a.replace(/^\//, '')];
+                    if (!bytes)
+                        throw new JavaFault('java/io/IOException', 'Missing ' + a);
+                    return this.image(bytes);
+                }
+                return this.image(a.slice(b, b + c));
+            }
+            if (name === 'getGraphics')
+                return this.graphics(obj.canvas);
+        }
+        if (owner === 'javax/microedition/lcdui/Graphics') {
+            if (name === 'setColor') {
+                obj.color = '#' + ((args.length === 1 ? a : (a << 16 | b << 8 | c)) & 0xffffff).toString(16).padStart(6, '0');
+                return;
+            }
+            if (name === 'setClip') {
+                obj.clip = [a, b, Math.max(0, c), Math.max(0, d)];
+                return;
+            }
+            if (name === 'fillRect') {
+                if (this.art?.panel(this, obj, args, t))
+                    return;
+                if (c > 0 && d > 0)
+                    this.draw(obj, ctx => ctx.fillRect(a, b, c, d));
+                return;
+            }
+            if (name === 'drawRect') {
+                if (c >= 0 && d >= 0)
+                    this.draw(obj, ctx => ctx.strokeRect(a + .5, b + .5, c, d));
+                return;
+            }
+            if (name === 'drawLine') {
+                this.draw(obj, ctx => { ctx.beginPath(); ctx.moveTo(a + .5, b + .5); ctx.lineTo(c + .5, d + .5); ctx.stroke(); });
+                return;
+            }
+            if (name === 'drawImage') {
+                this.vm.notNull(a);
+                const im = a.canvas, w = a.width ?? im.width, h = a.height ?? im.height, [x, y] = this.anchor(b, c, w, h, d);
+                this.draw(obj, ctx => { ctx.imageSmoothingEnabled = !!a.hd; ctx.drawImage(im, 0, 0, im.width, im.height, x, y, w, h); });
+                return;
+            }
+            if (name === 'drawRegion') {
+                this.vm.notNull(a);
+                if (this.art?.region(this, obj, ...args, t))
+                    return;
+                if (d <= 0 || e <= 0)
+                    return;
+                const swap = f >= 4, [x, y] = this.anchor(g, h, swap ? e : d, swap ? d : e, i), mat = [[1, 0, 0, 1, 0, 0], [1, 0, 0, -1, 0, e], [-1, 0, 0, 1, d, 0], [-1, 0, 0, -1, d, e], [0, 1, 1, 0, 0, 0], [0, 1, -1, 0, e, 0], [0, -1, 1, 0, 0, d], [0, -1, -1, 0, e, d]][f];
+                if (!mat)
+                    throw new JavaFault('java/lang/IllegalArgumentException', 'Invalid transform');
+                this.draw(obj, ctx => { ctx.translate(x, y); ctx.transform(...mat); const sx = a.canvas.width / (a.width ?? a.canvas.width), sy = a.canvas.height / (a.height ?? a.canvas.height); ctx.imageSmoothingEnabled = !!a.hd; ctx.drawImage(a.canvas, b * sx, c * sy, d * sx, e * sy, 0, 0, d, e); });
+                return;
+            }
+        }
+        if (owner === 'javax/microedition/rms/RecordStore') {
+            if (name === 'openRecordStore') {
+                if (!(a in this.records)) {
+                    let stored = null;
+                    try {
+                        stored = this.storage.getItem('tribes-original-rms:' + a);
+                    }
+                    catch { }
+                    if (!stored && !b)
+                        throw new JavaFault('javax/microedition/rms/RecordStoreNotFoundException');
+                    this.records[a] = stored ? JSON.parse(stored) : [];
+                }
+                return cls(owner, { name: a });
+            }
+            if (name === 'deleteRecordStore') {
+                delete this.records[a];
+                try {
+                    this.storage.removeItem('tribes-original-rms:' + a);
+                }
+                catch { }
+                return;
+            }
+            if (name === 'closeRecordStore')
+                return;
+            if (name === 'getNumRecords')
+                return this.records[obj.name].length;
+            if (name === 'getRecord') {
+                let data = this.records[obj.name][a - 1];
+                if (!data)
+                    throw new JavaFault('javax/microedition/rms/InvalidRecordIDException');
+                return Int8Array.from(data);
+            }
+            if (name === 'addRecord') {
+                let data = Array.from(a.slice(b, b + c));
+                this.records[obj.name].push(data);
+                this.persist(obj.name);
+                return this.records[obj.name].length;
+            }
+        }
+        if (owner === 'javax/microedition/media/Manager' && name === 'createPlayer') {
+            let p = cls('javax/microedition/media/Player', { state: 100, data: this.bytes(a).data, mediaTime: 0n });
+            this.media.push(p);
+            return p;
+        }
+        if (owner === 'javax/microedition/media/Player' || owner === 'javax/microedition/media/Controllable') {
+            if (name === 'getControl')
+                return cls('javax/microedition/media/control/VolumeControl', { player: obj });
+            if (name === 'getState')
+                return obj.state;
+            if (name === 'realize') {
+                obj.state = 200;
+                return;
+            }
+            if (name === 'prefetch') {
+                obj.state = 300;
+                return;
+            }
+            if (name === 'start') {
+                obj.state = 400;
+                this.audio?.start(obj);
+                return;
+            }
+            if (name === 'stop') {
+                obj.state = 300;
+                this.audio?.stop(obj);
+                return;
+            }
+            if (name === 'close') {
+                obj.state = 0;
+                this.audio?.stop(obj);
+                return;
+            }
+            if (name === 'setMediaTime') {
+                obj.mediaTime = a;
+                return a;
+            }
+            if (name === 'addPlayerListener') {
+                obj.listener = a;
+                return;
+            }
+        }
+        if (owner === 'javax/microedition/media/control/VolumeControl' && name === 'setLevel') {
+            obj.player.volume = a;
+            this.audio?.setVolume(obj.player, a);
+            return a;
+        }
+        throw Error('Unimplemented native ' + owner + '.' + name + desc);
+    }
+}
+//# sourceMappingURL=midp.js.map

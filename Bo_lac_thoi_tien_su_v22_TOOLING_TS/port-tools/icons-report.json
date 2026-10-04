@@ -1,0 +1,30 @@
+{
+  "errors": [],
+  "draws": 1563,
+  "kinds": [
+    "up",
+    "down",
+    "fist",
+    "work",
+    "hammer",
+    "speed",
+    "sack",
+    "heart",
+    "food",
+    "sleep",
+    "scout",
+    "spear",
+    "builder",
+    "music",
+    "female",
+    "mood4",
+    "club",
+    "rail",
+    "bone",
+    "cook",
+    "male",
+    "mood3",
+    "shield",
+    "axe"
+  ]
+}

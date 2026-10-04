@@ -1,0 +1,100 @@
+export class VietnameseText {
+    native;
+    data;
+    measure;
+    constructor(native, data) { this.native = native; this.data = data; this.measure = native.makeCanvas(1, 1).getContext('2d'); }
+    get vm() { return this.native.vm; }
+    get(o, n, d) { return this.vm.get(o, 'c', n, d); }
+    set(o, n, d, v) { this.vm.set(o, 'c', n, d, v); }
+    width(text, size = 11) { this.measure.font = `${size}px TribesVN`; return Math.ceil(this.measure.measureText(text).width); }
+    draw(g, text, x, y, size = 11, color = '#fff2b0', max = 240) { if (!g)
+        return; this.native.draw(g, ctx => { ctx.font = `${size}px TribesVN`; ctx.textBaseline = 'alphabetic'; ctx.lineJoin = 'round'; ctx.lineWidth = 2; ctx.strokeStyle = '#342317'; ctx.fillStyle = color; ctx.strokeText(text, x + 11, y + 18, max); ctx.fillText(text, x + 11, y + 18, max); }); }
+    intercept(owner, name, desc, o, args) {
+        if (owner !== 'c' || this.vm.statics['f.a:B'] !== 0)
+            return false;
+        const key = name + desc;
+        if (key === 'b(I)V') {
+            const old = this.get(o, 'b', '[B');
+            if (old && old.length < 16384) {
+                const bytes = new Int8Array(16384);
+                bytes.set(old);
+                this.set(o, 'b', '[B', bytes);
+                this.get(o, 'a', '[[B')[0] = bytes;
+            }
+            return false;
+        }
+        if (key === 'a(IIIII)V') {
+            this.label(o, args[0], args[1], args[2], this.data.s[args[3]] ?? '', args[4], args[3]);
+            return true;
+        }
+        if (key === 'a(IIILjava/lang/String;I)V') {
+            this.label(o, args[0], args[1], args[2], args[3], args[4]);
+            return true;
+        }
+        if (key === 'a(Ljavax/microedition/lcdui/Graphics;)V') {
+            this.native.touch?.captureText(o, this.get(o, 'a', 'B'));
+            this.native.art?.mainMenu(this.native, args[0], o, (o.vnSlots || []).slice(0, this.get(o, 'a', 'B')));
+            for (let i = 0; i < this.get(o, 'a', 'B'); i++) {
+                const s = o.vnSlots?.[i];
+                if (s)
+                    this.draw(args[0], s.text, this.get(o, 'f', '[S')[i], this.get(o, 'e', '[S')[i], s.size, s.color, s.width);
+            }
+            this.set(o, 'a', 'B', 0);
+            return true;
+        }
+        if (key === 'b(IIIIIII)V') {
+            this.paragraph(o, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+            return true;
+        }
+        if (key === 'a(Ljavax/microedition/lcdui/Graphics;I)V') {
+            const [g, scroll] = args, p = o.vnParagraph;
+            if (p) {
+                for (let i = scroll; i < Math.min(scroll + p.visible, p.lines.length); i++) {
+                    const line = p.lines[i], y = p.y + (i - scroll) * 17;
+                    this.draw(g, line, p.x + (p.center ? (p.width - this.width(line)) / 2 : 0), y, 11, '#fff2b0', p.width);
+                }
+                this.vm.statics['f.Q:Z'] = scroll === 0 ? 1 : 0;
+                this.vm.statics['f.R:Z'] = scroll + p.visible >= p.lines.length ? 1 : 0;
+            }
+            return true;
+        }
+        if (key === 'a(III)V') {
+            const [id, x, y] = args;
+            for (let i = 13; i < 33; i++) {
+                const s = o.vnSlots?.[i];
+                if (s && this.get(o, 'f', '[S')[i] === id)
+                    this.draw(this.vm.statics['f.a:[Ljavax/microedition/lcdui/Graphics;']?.[0], s.text, x - s.width / 2, y - 5 - this.get(o, 'e', '[S')[i] * 2, s.size, s.color, s.width);
+            }
+            return true;
+        }
+        return false;
+    }
+    label(o, x, y, anchor, text, font, label = null) { const normalized = String(text ?? '').normalize('NFC'); text = normalized; const toast = y === -100, slot = toast ? 13 + this.get(o, 'b', 'B') : this.get(o, 'a', 'B'); if (slot >= 33 || (!toast && slot >= 13) || (toast && this.get(o, 'f', '[S')[slot] !== 0))
+        return; const size = toast ? 9 : 11, width = Math.min(224, this.width(normalized, size)); (o.vnSlots ??= [])[slot] = { text: normalized, size, width, label, color: font === 1 ? '#ffad85' : font === 2 ? '#b7ff86' : '#fff2b0' }; this.get(o, 'd', '[B')[slot] = Math.min(127, normalized.length); this.get(o, 'd', '[S')[slot] = width; this.get(o, 'e', '[B')[slot] = font; this.get(o, 'f', '[S')[slot] = toast ? x : Math.round(x - width * anchor / 2); this.get(o, 'e', '[S')[slot] = toast ? 0 : y; this.set(o, 'h', 'I', slot); this.set(o, toast ? 'b' : 'a', 'B', toast ? (this.get(o, 'b', 'B') + 1) % 20 : slot + 1); }
+    paragraph(o, x, y, width, height, index, flags, font) { x++; width -= 2; y += 4; height -= 4; if (index >= 71)
+        index += this.get(o, 'a', '[B')[this.get(o, 'a', '[S')[309] + this.get(o, 'g', 'I')] & 255; let text = (index < 71 ? this.data.t[index] : this.data.d0[index - 71]) ?? ''; text = text.replace('{VERSION}', this.native.manifest['MIDlet-Version'] || '1.0').replace(/\{STAT:(\d+)\}/g, (_, n) => { const rows = this.vm.get(this.get(o, 'a', 'Lf;'), 'f', 'a', '[[S'); const scale = Number(n) === 24 ? 10 : 1; return `${(rows?.[0]?.[n] ?? 0) * scale}          ${(rows?.[1]?.[n] ?? 0) * scale}`; }); const lines = []; for (const block of text.normalize('NFC').split('&')) {
+        let line = '';
+        for (const word of block.split(/\s+/)) {
+            if (!word)
+                continue;
+            const next = line ? line + ' ' + word : word;
+            if (this.width(next) <= width)
+                line = next;
+            else {
+                if (line)
+                    lines.push(line);
+                line = word;
+                while (this.width(line) > width) {
+                    let end = 1;
+                    while (end < line.length && this.width(line.slice(0, end + 1)) <= width)
+                        end++;
+                    lines.push(line.slice(0, end));
+                    line = line.slice(end);
+                }
+            }
+        }
+        lines.push(line);
+    } const visible = Math.max(1, Math.floor(height / 17)); if (flags === 3 && lines.length * 17 < height)
+        y += Math.floor((height - lines.length * 17) / 2); o.vnParagraph = { lines, x, y, width, visible, center: !!(flags & 1) }; this.set(o, 'u', 'I', lines.length); this.set(o, 't', 'I', visible); this.set(o, 'r', 'I', y); this.set(o, 's', 'I', font); }
+}
+//# sourceMappingURL=unicode-text.js.map

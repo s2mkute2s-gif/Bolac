@@ -1,0 +1,31 @@
+STATUS {"instructions":2745002,"threads":[{"id":8,"wait":false,"frames":["f.run()V:263","tribes.a(I)V:5"]}],"current":"f","errors":[],"trace":[]}
+KEY 1 errors 0 instructions 3162860
+KEY 2 errors 0 instructions 3400010
+KEY 3 errors 0 instructions 3635104
+KEY 4 errors 0 instructions 3869287
+Đã lưu dữ liệu gốc
+KEY 5 errors 0 instructions 4096149
+KEY 6 errors 0 instructions 6207300
+KEY 7 errors 0 instructions 6228965
+KEY 8 errors 0 instructions 6263804
+KEY 9 errors 0 instructions 6295887
+KEY 10 errors 0 instructions 6347700
+KEY 11 errors 0 instructions 6363604
+KEY 12 errors 0 instructions 6380179
+KEY 13 errors 0 instructions 6416121
+KEY 14 errors 0 instructions 6455720
+KEY 15 errors 0 instructions 6509845
+KEY 16 errors 0 instructions 6563985
+KEY 17 errors 0 instructions 6613832
+KEY 18 errors 0 instructions 6668622
+END {"instructions":7244304,"errors":[],"trace":[],"threads":[{"id":8,"wait":false,"frames":["f.run()V:263","tribes.a(I)V:5"]}],"stores":[["tribes-original-rms:t0",24]]}
+WORLD {"instructions":49295420,"errors":[],"exceptions":[]}
+PAUSE []
+LAST errors []
+Đã lưu dữ liệu gốc
+Đã lưu dữ liệu gốc
+SAVE stores [["tribes-original-rms:t1",25727],["tribes-original-rms:t0",23]]
+RESTORE {"errors":[],"stores":["t0"],"instructions":4179594,"exceptions":[]}
+LOAD {"errors":[],"stores":["t0"],"instructions":5974328,"exceptions":[]}
+CHOICE [ 't0' ]
+VERIFIED RESTORE {"errors":[],"stores":["t0","t1"],"instructions":20437258,"exceptions":[]}

@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+MIDlet-Name: Bo lac thoi tien su
+MIDlet-Version: 0.1.28
+MIDlet-Vendor: THQ
+MIDlet-1: Bo lac thoi tien su, icon.png, tribes
+MIDlet-2: WapTai.COM, WapTai/icon2.png, WapTai.COM.WapTai
+MicroEdition-Profile: MIDP-2.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Icon: /icon.png
+MIDlet-Info-URL: http://waptai.com
+Created-By: Metaflow
+Cheat-Support: off
+Content-Folder: Games
+GameUrl-en: http://waptai.com
+GameUrl-de: http://waptai.com
+GameUrl-fr: http://waptai.com
+GameUrl-es: http://waptai.com
+GameUrl-it: http://waptai.com
+GameLinkEnabled: false
+

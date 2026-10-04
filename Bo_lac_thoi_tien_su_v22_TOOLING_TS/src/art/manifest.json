@@ -1,0 +1,20 @@
+{
+  "files": [
+    "menu.webp",
+    "terrain.webp",
+    "villager-avatars.webp",
+    "startup-hd.webp"
+  ],
+  "replacements": {
+    "2af7c5e": {
+      "file": "terrain.webp",
+      "width": 66,
+      "height": 48
+    },
+    "e434d51": {
+      "file": "startup-hd.webp",
+      "width": 240,
+      "height": 321
+    }
+  }
+}

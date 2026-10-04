@@ -1,0 +1,8 @@
+Tooling typecheck checkpoint
+- noCheck removed
+- strict: true
+- tsc -p tsconfig.tools.json --noEmit: PASS (0 diagnostics)
+- tooling build: PASS
+- regression: 15/15 PASS
+- Compatibility declarations added for original-web runtime imports used by legacy tooling.
+- Remaining strictness debt: noImplicitAny=false and strictNullChecks=false in tsconfig.tools.json. These are intentionally isolated and are NOT claimed complete.

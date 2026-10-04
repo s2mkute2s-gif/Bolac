@@ -1,0 +1,7 @@
+Bo lac thoi tien su - v21 ZERO_ANY audit
+- Explicit `any` tokens in src/**/*.ts: 0
+- @ts-nocheck/@ts-ignore/@ts-expect-error in src/**/*.ts: 0
+- npm run typecheck: PASS
+- npm run build: PASS
+- npm test: 15/15 PASS
+Note: noImplicitAny and strictNullChecks remain separate migration phases; this release closes the previously audited 78 explicit-any locations.

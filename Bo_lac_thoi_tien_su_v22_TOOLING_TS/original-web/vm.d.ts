@@ -1,0 +1,1 @@
+export const VM:any; export const javaString:any; export const jsString:any; export const parseDescriptor:any; export const defaultValue:any; export const s32:any; export const i8:any; export const i16:any; export const f32:any; export const f64:any;

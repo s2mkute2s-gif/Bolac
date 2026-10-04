@@ -1,0 +1,33 @@
+MÃ NGUỒN GAME WEB BỘ LẠC THỜI TIỀN SỬ — V12
+Commit: 07a6abdfd1e9d9bca17789346737a2616d58aa3a
+
+Đây là mã nguồn của bản web v12 đã triển khai, chưa phải bản chuyển hoàn toàn sang TypeScript.
+Logic Java gốc nằm trong classes.json, được vm.js thực thi.
+
+CHẠY GAME
+Cài Python 3. Mở terminal trong thư mục giải nén, chạy:
+python3 -m http.server 8080 --directory dist
+Mở http://localhost:8080 trong trình duyệt.
+Không mở index.html trực tiếp bằng file://.
+
+THƯ MỤC
+original-web/: mã JavaScript, bytecode game, giao diện, ảnh, bản đồ, âm thanh.
+dist/: bản web chạy được, tương ứng nguồn.
+reference/: JAR tham chiếu gốc.
+port-tools/: công cụ trích xuất, kiểm thử và báo cáo.
+tests/: kiểm thử bộ chạy Java.
+README.md: hướng dẫn chi tiết và lịch sử các thay đổi.
+
+CHỈNH SỬA
+Sửa original-web/, rồi đồng bộ các file thay đổi sang dist/ trước khi chạy hoặc xuất bản.
+Kiểm tra VM bằng npm test (cần Node.js).
+Các bài kiểm thử hình ảnh cần @napi-rs/canvas; một số script dùng đường dẫn môi trường của nơi phát triển, cần điều chỉnh khi chạy trên máy riêng.
+
+TRẠNG THÁI V12
+Có bộ đệm khung hình và cập nhật camera ở ranh giới xử lý để tránh hiển thị khung hình vẽ dở.
+Chưa đạt 60 FPS; bài thử Native Canvas đạt 109 khung hình hoàn chỉnh / 10 giây mô phỏng.
+Chưa kiểm chứng trực tiếp trên điện thoại.
+
+ĐƯA SANG AI STUDIO
+Cung cấp mã nguồn trong original-web cùng toàn bộ tài nguyên. Yêu cầu giữ logic hiện có, đọc classes.json và vm.js trước khi chỉnh sửa.
+Nếu muốn chuyển sang TypeScript thuần, đây là nhiệm vụ chuyển đổi tiếp theo; đổi đuôi file không loại bỏ bộ chạy Java.

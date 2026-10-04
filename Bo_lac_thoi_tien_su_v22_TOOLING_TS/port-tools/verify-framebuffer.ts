@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+import {MIDP} from '../original-web/midp.js';
+const require=createRequire(import.meta.url);
+const {createCanvas}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/@napi-rs/canvas');
+const canvas=createCanvas(4,4),midp=new MIDP({canvas,makeCanvas:createCanvas});
+midp.vm={errors:[]};
+const front=canvas.getContext('2d'),back=midp.backCanvas.getContext('2d');
+front.fillStyle='blue';front.fillRect(0,0,4,4);
+const before=front.getImageData(0,0,4,4).data.slice();
+midp.paintThread={done:false};back.fillStyle='red';back.fillRect(0,0,4,2);
+assert.equal(midp.present(),false);assert.deepEqual(front.getImageData(0,0,4,4).data,before,'partial paint must remain invisible');
+back.fillRect(0,2,4,2);midp.paintThread.done=true;
+assert.equal(midp.present(),true);assert.deepEqual([...front.getImageData(0,0,1,1).data],[255,0,0,255]);assert.deepEqual([...front.getImageData(0,3,1,1).data],[255,0,0,255]);
+assert.equal(midp.present(),false);assert.equal(midp.presentedFrames,1);
+console.log('PASS: partial frames stay hidden; completed frame is published once, including its final row.');

@@ -1,0 +1,31 @@
+STATUS {"instructions":3611003,"threads":[{"id":8,"wait":false,"frames":["f.run()V:263","tribes.a(I)V:5"]}],"current":"f","errors":[],"trace":[{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337}]}
+KEY 1 errors 0 instructions 4065600
+KEY 2 errors 0 instructions 4448210
+KEY 3 errors 0 instructions 4768494
+KEY 4 errors 0 instructions 5038650
+Đã lưu dữ liệu gốc
+KEY 5 errors 0 instructions 5311656
+KEY 6 errors 0 instructions 7524757
+KEY 7 errors 0 instructions 7548719
+KEY 8 errors 0 instructions 7603200
+KEY 9 errors 0 instructions 7744389
+KEY 10 errors 0 instructions 7796103
+KEY 11 errors 0 instructions 7812048
+KEY 12 errors 0 instructions 7828681
+KEY 13 errors 0 instructions 7886244
+KEY 14 errors 0 instructions 7926164
+KEY 15 errors 0 instructions 8014079
+KEY 16 errors 0 instructions 8110233
+KEY 17 errors 0 instructions 8200585
+KEY 18 errors 0 instructions 8290993
+END {"instructions":8838460,"errors":[],"trace":[{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337},{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337}],"threads":[{"id":8,"wait":false,"frames":["f.run()V:263","tribes.a(I)V:5"]}],"stores":[["tribes-original-rms:t0",24]]}
+WORLD {"instructions":26519601,"errors":[],"exceptions":[{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337},{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337}]}
+PAUSE []
+LAST errors []
+Đã lưu dữ liệu gốc
+Đã lưu dữ liệu gốc
+SAVE stores [["tribes-original-rms:t1",25729],["tribes-original-rms:t0",23]]
+RESTORE {"errors":[],"stores":["t0"],"instructions":5124572,"exceptions":[{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337},{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337}]}
+LOAD {"errors":[],"stores":["t0"],"instructions":7775676,"exceptions":[{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337},{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337}]}
+CHOICE [ 't0' ]
+VERIFIED RESTORE {"errors":[],"stores":["t0","t1"],"instructions":22283485,"exceptions":[{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337},{"type":"java/lang/ArrayIndexOutOfBoundsException","msg":"1674/1674","where":"c","pc":337}]}
